@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pruebatecnica.ecommerce.model.Cart;
 import com.pruebatecnica.ecommerce.model.Product;
-import com.pruebatecnica.ecommerce.services.CarritoService;
+import com.pruebatecnica.ecommerce.services.CartsService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CartController {
 
 	@Autowired
-	CarritoService carritoService;
+	CartsService carritoService;
 
 	@GetMapping("/new")
 	public ResponseEntity<Cart> getNewCart() {

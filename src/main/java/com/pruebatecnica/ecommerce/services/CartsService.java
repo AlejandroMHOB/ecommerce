@@ -7,16 +7,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.pruebatecnica.ecommerce.model.Cart;
 
 @Service
-public class CarritoService {
+public class CartsService {
+	private List<Cart> carts = new ArrayList<>();
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final Long TTLSeconds = 10L;
-    
-    private List<Cart> carts = new ArrayList<>();
+	
+	@Value("${carts.ttl-minutes}")
+    private Long TTLMinutes;
     
 
 	public Cart newCart() {
@@ -24,7 +26,7 @@ public class CarritoService {
 		this.carts.add(c);
 		
 		// AÑADIR TEMPORIZADOR PARA EL OBJETO
-        scheduler.schedule(() -> this.deleteCart(c.getId()), this.TTLSeconds, TimeUnit.SECONDS);
+        scheduler.schedule(() -> this.deleteCart(c.getId()), this.TTLMinutes, TimeUnit.MINUTES);
 		return c;
 	}
 
