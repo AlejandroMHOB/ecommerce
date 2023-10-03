@@ -26,13 +26,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CartController {
 
 	@Autowired
-	CartsService carritoService;
+	CartsService cartsService;
 
 	@GetMapping("/new")
 	public ResponseEntity<Cart> getNewCart() {
 		log.info("Creando un nuevo carrito...");
 		try {
-			Cart carrito = this.carritoService.newCart();
+			Cart carrito = this.cartsService.newCart();
 			return new ResponseEntity<Cart>(carrito, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<Cart>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -43,7 +43,7 @@ public class CartController {
 	public ResponseEntity<Cart> getCart(@PathVariable(value = "id") Long id) {
 		log.info("Obteniendo información del carrito con id '{}'...", id);
 		try {
-			Optional<Cart> carrito = this.carritoService.getCart(id);
+			Optional<Cart> carrito = this.cartsService.getCart(id);
 			if (carrito.isEmpty()) {
 				return new ResponseEntity<Cart>(HttpStatus.NOT_FOUND);
 			} else {
@@ -58,7 +58,7 @@ public class CartController {
 	public ResponseEntity<Boolean> deleteCart(@PathVariable(value = "id") Long id) {
 		log.info("Eliminando el carrito con id '{}'...", id);
 		try {
-			Boolean eliminado = this.carritoService.deleteCart(id);
+			Boolean eliminado = this.cartsService.deleteCart(id);
 			if (eliminado) {
 				return new ResponseEntity<Boolean>(HttpStatus.OK);
 			} else {
@@ -74,13 +74,11 @@ public class CartController {
 			@RequestBody List<Product> productsToAdd) {
 		log.info("Añadiendo productos al carrito con id '{}'...", cartId);
 		try {
-			Optional<Cart> carrito = this.carritoService.getCart(cartId);
-			if (carrito.isEmpty()) {
+			Cart carrito = this.cartsService.addProducts(cartId, productsToAdd);
+			if (carrito == null) {
 				return new ResponseEntity<Cart>(HttpStatus.NOT_FOUND);
 			} else {
-				carrito.get().getProducts().addAll(productsToAdd);
-
-				return new ResponseEntity<Cart>(carrito.orElse(null), HttpStatus.OK);
+				return new ResponseEntity<Cart>(carrito, HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			return new ResponseEntity<Cart>(HttpStatus.INTERNAL_SERVER_ERROR);
